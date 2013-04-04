@@ -1,0 +1,40 @@
+html
+  head
+    link(rel='stylesheet', href='/assets/css/normalize.css')
+    link(rel='stylesheet', href='/assets/css/foundation.css')
+    link(rel='stylesheet', href='/assets/css/app.css')
+    style
+      body {
+        background: none;
+      }
+  body
+    .row
+      p &nbsp; 
+      p &nbsp; 
+      p &nbsp;
+    .row
+      .large-12.columns
+        table
+          thead
+            tr
+              th Type
+              th Key
+              th Summary
+              th Status
+              th Priority
+              th Due date
+          tbody
+            for issue in issues
+              tr
+                td 
+                  img(src="#{issue.fields.issuetype.iconUrl}")
+                td
+                  small #{issue.key}
+                td
+                  a(href="http://jira.suitart.com/browse/#{issue.key}") #{issue.fields.summary}
+                td 
+                  img(src="#{issue.fields.status.iconUrl}")
+                td
+                  img(src="#{issue.fields.priority.iconUrl}")
+                td #{issue.fields.duedate}
+              

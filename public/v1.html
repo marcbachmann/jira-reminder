@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" ng-app="AW">
+<head>
+  <meta charset="utf-8">
+  <title>alpinewaters</title>
+  <link rel="stylesheet" href="/assets/css/normalize.css">
+  <link rel="stylesheet" href="/assets/css/foundation.css">
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <script src="/assets/js/lib/custom.modernizr.js"></script>
+  <base href="/">
+  
+</head>
+<body>
+  <nav id="toolbar">
+    <div class="top-bar">
+      <ul class="title-area">
+        <!-- Title Area -->
+        <li class="name">
+          <h1><a href="">alpinewaters</a></h1>
+        </li>
+        <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+        <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+      </ul>
+
+      <section class="top-bar-section">
+        <!-- Left Nav Section -->
+        <ul class="left">
+        </ul>
+
+        <!-- Right Nav Section -->
+        <ul class="right">
+          <li class="account"><a href="account">Account</a></li>
+          <li class="settings"><a href="settings">Settings</a></li>
+          <li class="logout"><a href="" ng-click="logOut()">Logout</a></li>
+        </ul>
+      </section>
+    </nav>
+  
+    <div id="menu">
+      <div class="section-container accordion">
+        <section class="section">
+          <p class="title dashboard"><a href="#">Dashboard</a></p>
+        </section>
+        <section class="section">
+          <p class="title customers"><a>Customers</a></p>
+          <div class="content">
+            <ul>
+              <li><a href="customers">All</a></li>
+              <li><a href="customer/new">Add New</a></li>
+            </ul>
+          </div>
+        </section>
+        <section class="section">
+          <p class="title orders"><a>Orders</a></p>
+          <div class="content">
+            <ul>
+              <li><a href="orders">All</a></li>
+              <li><a href="order/new">Add New</a></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div id="content">
+   <!--<div class="large-12 columns">
+      <ul class="breadcrumbs">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Features</a></li>
+        <li class="unavailable"><a href="#">Gene Splicing</a></li>
+        <li class="current"><a href="#">Cloning</a></li>
+      </ul>
+    </div>-->
+    <div class="row">
+      <div class="large-12 columns" ng-view></div>
+    </div>
+    <div id="footer">
+      <div class="large-12 columns"><small>alpinewaters app: V. <span app-version></span></small></div>
+    </div>
+  </div>
+
+  
+
+  <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+  <script src="/assets/js/lib/jquery.js"></script>
+  <script src="/assets/js/foundation.min.js"></script>
+  <script src="/assets/js/global.js"></script>
+   <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>-->
+   <script src="/assets/js/lib/angular/angular.js"></script>
+  <script src="/assets/js/lib/angular/angular-cookies.min.js"></script>
+  <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/services.js"></script>
+  <script src="/assets/js/controllers.js"></script>
+  <script src="/assets/js/filters.js"></script>
+  <script src="/assets/js/directives.js"></script>
+  <script>
+    $(document).foundation();
+  </script>
+</body>
+</html>

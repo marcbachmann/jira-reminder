@@ -1,0 +1,150 @@
+/* app css stylesheet */
+html, body { 
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+html {
+  background: url('../img/bg.png') repeat;
+}
+
+body {
+  background: url('../img/bodyBg.png') repeat-y 0 0;
+}
+
+#toolbar .top-bar {
+  position:fixed;
+  z-index:100;
+  width: 100%;
+  margin-bottom: 0;
+  font-size: 11px;
+  background: url('../img/topnavBg.png');
+}
+
+#toolbar .top-bar .name h1 a {
+  font-weight: normal;
+}
+
+#toolbar .top-bar-section > ul > .divider {height:34px;}
+
+#toolbar .top-bar .title-area li {
+  height: 34px;
+  background: none;
+}
+
+#toolbar .top-bar .name h1 {
+  line-height: 34px;
+  font-size: 1em;
+}
+
+#menu {
+  position: fixed;
+  left: 0;
+  width: 220px;
+  height: 100%;
+  padding-top: 35px;
+}
+
+#menu .section-container {
+  border:0;
+  background: rgb(37,46,52);
+}
+
+#menu section{
+  border:0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2)
+}
+
+#menu .content {
+  padding:0;
+}
+
+#menu p.title {
+  background: rgb(37,46,52);
+}
+#menu p.title a{
+  color: rgb(240,240,240);
+}
+
+#menu .active > p{
+  background: rgb(59,93,115);
+}
+
+#menu .content{
+  background: rgb(29,38,45);
+  color: #999;
+  display:none;
+}
+
+#menu .content li a{
+  display:block;
+  padding: 8px 20px;
+  font-size: 0.8em;
+  background: rgba(0, 0, 0, .2);
+  border-top: 1px solid rgba(255, 255, 255, .1);
+}
+
+#menu .content li a {
+  color: #AAA;
+}
+
+#content {
+  position:relative;
+  margin-left: 222px;
+  min-height: 100%;
+  padding: 35px 0 40px 0;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width:100%;
+  padding: 10px;
+  background: rgb(37,46,52);
+  color: rgb(240,240,240);
+}
+
+#toolbar li {
+  background: #1B2125;
+  line-height: 14px;
+  border-bottom: 1px solid #323E46;
+}
+
+#toolbar .account a{
+  background: url('../img/account.png') no-repeat 10px 10px;
+  background-size: 15px;
+  padding-left:34px;
+}
+
+#toolbar .settings a{
+  background: url('../img/settings.png') no-repeat 10px 10px;
+  background-size: 15px;
+  padding-left:34px;
+}
+
+#toolbar .logout a{
+  background: url('../img/logout.png') no-repeat 10px 10px;
+  background-size: 15px;
+  padding-left:34px;
+}
+
+
+
+#menu p > a{
+  padding-left:55px;
+}
+#menu .dashboard a{
+  background: url('../img/dashboard.png') no-repeat 15px 10px;
+  background-size: 29px;
+}
+
+#menu .orders a{
+  background: url('../img/orders.png') no-repeat 15px 10px;
+  background-size: 27px;
+}
+
+#menu .customers a{
+  background: url('../img/customers.png') no-repeat 15px 10px;
+  background-size: 29px;
+}
