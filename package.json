@@ -1,0 +1,31 @@
+{
+  "name": "jira-reminder",
+  "version": "0.0.1",
+  "description": "Jira Issue Reminder Script",
+  "main": "app.js",
+  "dependencies": {
+    "express": "~3.1.1",
+    "jade": "~0.28.2",
+    "jira": "~0.4.0",
+    "mysql": "~2.0.0-alpha7",
+    "request": "~2.16.6",
+    "step": "~0.0.5",
+    "underscore": "~1.4.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrbrookman/jira-reminder"
+  },
+  "keywords": [
+    "jira",
+    "nodejs"
+  ],
+  "author": "mrbrookman",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "14e66f04de50e6b1f8e00d559c4384fe2eccca81"
+}

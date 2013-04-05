@@ -1,40 +1,309 @@
+!!! 5
 html
-  head
-    link(rel='stylesheet', href='/assets/css/normalize.css')
-    link(rel='stylesheet', href='/assets/css/foundation.css')
-    link(rel='stylesheet', href='/assets/css/app.css')
-    style
-      body {
-        background: none;
+head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    title
+      | Jira Reminder
+    meta(name='viewport', content='width=720')
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    style(type='text/css')
+      body, p {font-family: "Lucida Grande",Geneva,Arial,Helvetica,sans-serif;font-size: 14px; color: #444;}
+      h3 {font-size: 1.2em; margin-bottom: 10px; font-weight: 600;}
+      p {margin: 0 0 5px 0;}
+      a,a:link,a:visited,a:active,a.products,a.products:link,a.products:visited,a.products:active { text-decoration:none }
+      a:hover,a.products:hover { text-decoration:underline }
+      sup {font-family: "Lucida Grande",Geneva,Arial,Helvetica,sans-serif;font-size: 75%; line-height: 75%; -webkit-text-size-adjust:120%;}
+      body {width: 100% !important;}
+      a:link, a:visited {
+      color: #2400B4;
       }
-  body
-    .row
-      p &nbsp; 
-      p &nbsp; 
-      p &nbsp;
-    .row
-      .large-12.columns
-        table
-          thead
+      a.more {
+      font-size: 0.9em;
+      line-height: 1.4em;
+      }
+      
+      #content table {
+        background: #F7F7F7;
+        margin-bottom: 1.25em;
+        border: 1px solid #CDCDCD;
+      }
+      
+      #content table thead {
+        background: #EEE;
+      }
+
+      #content table thead tr th {
+        padding: 0.5em 0.625em 0.625em;
+        font-size: 0.875em;
+        text-align: left;
+        color: #505050;
+        font-weight: 500;
+      }
+      
+      #content table tr th, #content table tr td {
+        padding: 0.6em 0.7em;
+        font-size: 0.875em;
+        color: #5F5F5F;
+        border-left: 1px solid #DFDFDF;
+        box-shadow: 0 1px 0 #FAFAFA inset;
+        -webkit-box-shadow: 0 1px 0 #FAFAFA inset;
+        -moz-box-shadow: 0 1px 0 #fafafa inset;
+        font-weight: 400;
+      }
+      
+      #content table tr {
+        border-top: 1px solid #DFDFDF
+      }
+      
+      #content table td{
+        padding: 0.6em 0.7em;
+        font-size: 0.875em;
+        color: #5F5F5F;
+        border-left: 1px solid #DFDFDF;
+        border-top: 1px solid #DFDFDF;
+        box-shadow: 0 1px 0 #FAFAFA inset;
+        -webkit-box-shadow: 0 1px 0 #FAFAFA inset;
+        -moz-box-shadow: 0 1px 0 #fafafa inset;
+        font-weight: 400;
+      }
+      
+      #footer, #footer p {
+      font-size: 0.85em;
+      color: #777;
+      margin-bottom: 20px;
+      line-height: 1.5em;
+      }
+      #footer a:link {
+      color: #777777;
+      text-decoration: underline;
+      }
+    //if gte mso 9
+      style(type='text/css')
+        table,td,div,p {font-family: Lucida Sans, Lucida Sans Unicode, Lucida Grande, Arial, Helvetica, Verdana, sans-serif !important;line-height:normal !important}
+    //if lte mso 7
+      style(type='text/css')
+        table,td,div,p {font-family: Lucida Grande, Lucida Sans, Lucida Sans Unicode, Arial, Helvetica, Verdana, sans-serif !important;line-height:normal}
+  body(bgcolor='#EEEEEE', style='margin: 0; padding: 0;')
+    p
+      a#top(name='top')
+    table(width='100%', border='0', cellspacing='0', cellpadding='0', align='center', style='margin: 0 auto;')
+      tr
+        td(style='padding: 30px 20px 40px 20px; background-color: #EEEEEE;')
+          //
+             Begin Header 
+          table#header(width='682', border='0', cellspacing='0', cellpadding='0', align='center', style='margin: 0 auto;', bgcolor='#EEEEEE')
             tr
-              th Type
-              th Key
-              th Summary
-              th Status
-              th Priority
-              th Due date
-          tbody
-            for issue in issues
-              tr
-                td 
-                  img(src="#{issue.fields.issuetype.iconUrl}")
-                td
-                  small #{issue.key}
-                td
-                  a(href="http://jira.suitart.com/browse/#{issue.key}") #{issue.fields.summary}
-                td 
-                  img(src="#{issue.fields.status.iconUrl}")
-                td
-                  img(src="#{issue.fields.priority.iconUrl}")
-                td #{issue.fields.duedate}
-              
+              td(width='192', height='25', align='left', valign='bottom', style='padding-left: 20px; padding-bottom: 7px; display: none; opacity: 0; font-size: 0;')
+                p #{user.summary}
+              td(width='450', height='25', align='right', valign='bottom', style='padding-right: 20px; padding-bottom: 7px;')
+                a(href='http://jira.suitart.com', style='font-family: Lucida Grande,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; line-height: 1.5em; color: #666666;') Dashboard
+                span(style='font-family: Lucida Grande,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; line-height: 1.5em; color: #666666; margin-left: 10px; margin-right: 10px; display: inline;') |
+                a(href='http://jira.suitart.com/secure/BrowseProjects.jspa#all', style='font-family: Lucida Grande,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; line-height: 1.5em; color: #666666;') Projects
+                span(style='font-family: Lucida Grande,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; line-height: 1.5em; color: #666666; margin-left: 10px; margin-right: 10px; display: inline;') |
+                a(href='http://jira.suitart.com/issues/?filter=-1&jql=status%20in%20(Open%2C%20%22In%20Progress%22%2C%20Reopened)%20AND%20assignee%20in%20(currentUser())%20ORDER%20BY%20due%20ASC%2C%20updatedDate%20DESC', style='font-family: Lucida Grande,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; line-height: 1.5em; color: #666666;') My Tasks
+                span(style='font-family: Lucida Grande,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; line-height: 1.5em; color: #666666; margin-left: 10px; margin-right: 10px; display: inline;') |
+                a(href='http://jira.suitart.com/secure/TempoUserBoard!timesheet.jspa', style='font-family: Lucida Grande,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; line-height: 1.5em; color: #666666;') Time Tracking
+          //
+             End Header 
+          table(width='680', border='0', cellspacing='0', cellpadding='0', align='center', style='margin: 0 auto;')
+            tr
+              td(width='680', height='1', bgcolor='#B0B0B0')
+                img(src='http://cdn.suitart.com/email/spacer.gif', width='1', height='1', border='0', alt='', style='display: block; margin: 0;')
+            //
+              Border Top 
+            tr
+              td(width='680', style='background-color: #ffffff;', bgcolor='#FFFFFF')
+                table(width='680', border='0', align='center', cellpadding='0', cellspacing='0', bgcolor='#FFFFFF', style='margin: 0 auto;')
+                  tr
+                    td(width='1', bgcolor='#B0B0B0')
+                      img(src='http://cdn.suitart.com/email/spacer.gif', width='1', height='1', border='0', alt='', style='display: block; margin: 0;')
+                    td(width='698')
+                      //
+                        Header 
+                      table(width='698', border='0', cellspacing='0', cellpadding='0')
+                        tr
+                          td(width='539', style='padding: 40px 0 0 40px;')
+                            div(style='font-family: Lucida Grande, Lucida Sans, Lucida Sans Unicode, Arial, Helvetica, Verdana, sans-serif; font-size: 36px; line-height: 1.2em; font-weight: bold; color: #000;')
+                              a(href="http://jira.suitart.com/secure/ViewProfile.jspa?name=#{user.name}") Hallo #{user.displayName}
+                          td(width='80', height='80', style='padding: 40px 40px 0 0;')
+                            img(label='Image', src='#{user.avatarUrls.medium}', width='80', height='80')
+                     
+                      table
+                        tr
+                          td(height='20')
+                            img(src='http://cdn.suitart.com/email/spacer.gif', alt='', width='1', height='20', border='0', style='display: block; margin: 0;')
+                      //
+                        layout(label='Two Up - Text Blocks')
+                          table(width='698', border='0', cellspacing='0', cellpadding='0')
+                            tr
+                              td(width='349', align='left', valign='top', style='padding: 0 0 0 40px;')
+                                multiline(label='Text 1')
+                              td(width='349', align='left', valign='top', style='padding: 0 40px 0 0;')
+                                multiline(label='Text 2')
+                      
+                      
+                      table#content(width='698', border='0', cellspacing='0', cellpadding='0')
+                        tr
+                          td(valign='top', style='padding: 0 40px;')
+                            if (!issues.hasIssues)
+                              p  
+                              p  
+                              .panel
+                                h3 You have no Tasks
+                            else
+                              p Here are some Tasks to do.
+                            if (issues.overdue.length)
+                              h3 Over due
+                              table(width="100%", border="0", cellspacing="0", cellpadding="0")
+                                thead
+                                  tr
+                                    th(width="20") Type
+                                    th Project
+                                    th Summary
+                                    th Status
+                                    th Priority
+                                    th Due date
+                                tbody
+                                  for issue in issues.overdue
+                                    tr
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuetype.ICONURL}")
+                                      td
+                                        small #{issue.pkey}
+                                      td
+                                        a(href="http://jira.suitart.com/browse/#{issue.pkey}") #{issue.SUMMARY}
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuestatus.ICONURL}")
+                                      td
+                                        img(src="http://jira.suitart.com#{issue.PRIORITY.ICONURL}")
+                                      td #{issue.DUEDATE}
+
+
+                            if (issues.today.length)
+                              h3 Today
+                              table(width="100%", border="0", cellspacing="0", cellpadding="0")
+                                thead
+                                  tr
+                                    th Type
+                                    th Project
+                                    th Summary
+                                    th Status
+                                    th Priority
+                                    th Due date
+                                tbody
+                                  for issue in issues.today
+                                    tr
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuetype.ICONURL}")
+                                      td
+                                        small #{issue.pkey}
+                                      td
+                                        a(href="http://jira.suitart.com/browse/#{issue.pkey}") #{issue.SUMMARY}
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuestatus.ICONURL}")
+                                      td
+                                        img(src="http://jira.suitart.com#{issue.PRIORITY.ICONURL}")
+                                      td #{issue.DUEDATE}
+
+
+                            if (issues.tomorrow.length)
+                              h3 Tomorrow
+                              table(width="100%", border="0", cellspacing="0", cellpadding="0")
+                                thead
+                                  tr
+                                    th Type
+                                    th Project
+                                    th Summary
+                                    th Status
+                                    th Priority
+                                    th Due date
+                                tbody
+                                  for issue in issues.tomorrow
+                                    tr
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuetype.ICONURL}")
+                                      td
+                                        small #{issue.pkey}
+                                      td
+                                        a(href="http://jira.suitart.com/browse/#{issue.pkey}") #{issue.SUMMARY}
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuestatus.ICONURL}")
+                                      td
+                                        img(src="http://jira.suitart.com#{issue.PRIORITY.ICONURL}")
+                                      td #{issue.DUEDATE}
+
+
+                            if (issues.nextdays.length)
+                              h3 Upcoming
+                              table(width="100%", border="0", cellspacing="0", cellpadding="0")
+                                thead
+                                  tr
+                                    th Type
+                                    th Project
+                                    th Summary
+                                    th Status
+                                    th Priority
+                                    th Due date
+                                tbody
+                                  for issue in issues.nextdays
+                                    tr
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuetype.ICONURL}")
+                                      td
+                                        small #{issue.pkey}
+                                      td
+                                        a(href="http://jira.suitart.com/browse/#{issue.pkey}") #{issue.SUMMARY}
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuestatus.ICONURL}")
+                                      td
+                                        img(src="http://jira.suitart.com#{issue.PRIORITY.ICONURL}")
+                                      td #{issue.DUEDATE}
+
+
+                            if (issues.unscheduled.length)
+                              h3 Unscheduled
+                              table(width="100%", border="0", cellspacing="0", cellpadding="0")
+                                thead
+                                  tr
+                                    th Type
+                                    th Project
+                                    th Summary
+                                    th Status
+                                    th Priority
+                                tbody
+                                  for issue in issues.unscheduled
+                                    tr
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuetype.ICONURL}")
+                                      td
+                                        small #{issue.pkey}
+                                      td
+                                        a(href="http://jira.suitart.com/browse/#{issue.pkey}") #{issue.SUMMARY}
+                                      td 
+                                        img(src="http://jira.suitart.com#{issue.issuestatus.ICONURL}")
+                                      td
+                                        img(src="http://jira.suitart.com#{issue.PRIORITY.ICONURL}")
+
+                            p &nbsp;
+                            
+                    //
+                      Border Right
+                    td(width='1', bgcolor='#B0B0B0')
+                      img(src='http://cdn.suitart.com/email/spacer.gif', width='1', height='1', border='0', alt='', style='display: block; margin: 0;')
+                //
+                  Border Bottom 
+                tr
+                  td(width='700', height='1', bgcolor='#B0B0B0')
+                    img(src='http://cdn.suitart.com/email/spacer.gif', width='1', height='1', border='0', alt='', style='display: block; margin: 0;')
+          //
+            Footer 
+          table(width='700', border='0', align='center', cellpadding='0', cellspacing='0', style='margin: 0 auto;')
+            tr
+              td(style='padding: 10px 40px;')
+                table#footer(width='650', border='0', cellspacing='0', cellpadding='0', align='left', valign='top')
+                  tr
+                    td
+                      p B inspired, Stelzenstrasse 4, Glattpark, Schweiz
+                      p Diese Meldung wird automatisch von JIRA-Reminder generiert. <br/>Wenn Sie der Meinung sind, dass Sie diese E-Mail irrtümlich erhalten haben, wenden Sie sich bitte an Ihre 
+                        a(href="http://jira.suitart.com/secure/ContactAdministrators!default.jspa") IT-Abteilung
+                        | .

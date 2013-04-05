@@ -9,4 +9,5 @@ exports.mysql = mysql.createConnection({
   host     : 'localhost',
   user     : 'jira',
   password : 'jira',
+  database : 'jira'
 });

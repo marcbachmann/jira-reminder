@@ -1,58 +1,248 @@
-var mysql = require('mysql');
 var path = require('path');
+var fs = require('fs');
+
 var request = require('request');
-var Step = require('step');
-var express = require('express');
 var _ = require('underscore');
+var moment = require('moment');
+    moment.lang('de');
+
+var express = require('express');
 var app = express();
+var jade = require('jade');
+
+var config = require('./config');
 
 var JiraApi = require('jira').JiraApi;
+var mysqlDriver = require('mysql');
+var nodemailer = require("nodemailer");
 
-var jira = new JiraApi('http', JiraConfig.host, JiraConfig.port, JiraConfig.user, JiraConfig.password, '2', true);
+var jira = new JiraApi('http', config.jira.host, config.jira.port, config.jira.user, config.jira.password, '2', true);
+var mysql = mysqlDriver.createConnection({host: config.mysql.host, user: config.mysql.user, password: config.mysql.password, database: config.mysql.database});
+var smtpTransport = nodemailer.createTransport("SMTP",{service: "Gmail", auth: {user: config.gmail.user,pass: config.gmail.password}});
 
 app.configure(function(){
   app.use(express.static(path.join(__dirname, "public"),{maxAge: 0}));
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-});
-
-
-MySQLConnection.connect();
-
-MySQLConnection.query('SELECT u.lower_user_name as user, u.display_name as fullname, u.email_adress as email FROM cwd_user u', function(err, rows, fields) {
-  if (err) throw err;
-  
-  console.log(rows);
-});
-
-MySQLConnection.end();
-/*
-request.get({uri: 'http://jira.suitart.com/rest/api/latest/user?username='+letter, 'auth': {'user': JiraConfig.user,'pass': JiraConfig.password,'sendImmediately': true}}
-, function (error, response, body) {
-  if (!error && response.statusCode == 200) {
-    usersAlphabet[countRequests] = JSON.parse(body);
-    countRequests = countRequests+1;
-    if (countRequests === 25) {
-      gotAllUsers(usersAlphabet);
-    }
-  }
-  else {
-    console.log('could not fetch users')
-    if (error) console.log(error)
-    else console.log(response)
-  }
-});*/
-
-
-app.get('/', function(req, res) {
-  jira.searchJira('status in (Open, "In Progress", Reopened) ORDER BY summary DESC', ["summary", "status", "issuetype", "priority", "duedate", "assignee"], function(error, result) {
-    result.issues.forEach(function(issue) {
-      console.log(issue);
-    });
-    res.render("issues.jade", result);
+  app.use(function(req, res, next){
+    //res.locals.moment = moment;
+    next();
   });
 });
-  
-app.listen(8000);
 
-console.log('Listening on port 8000');
+
+var issueTypes, issueStatus, issuePriorities, usersCount = 0;
+
+initialize();
+
+// Initialize all required ids, icons & images of issue types, status & priority
+function initialize() {
+  // http://jira.suitart.com/rest/api/2/issuetype
+  // http://jira.suitart.com/rest/api/2/status
+  // http://jira.suitart.com/rest/api/2/priority
+  
+  mysql.query('SELECT * FROM issuetype', function(err, rows, fields) {
+    if (err) throw err;
+    issueTypes = rows;
+    getIssueTypes();
+  });
+
+  function getIssueTypes() {
+    mysql.query('SELECT * FROM issuestatus', function(err, rows, fields) {
+      if (err) throw err;
+      issueStatus = rows;
+      getIssuePriorities();
+    });
+  }
+
+  function getIssuePriorities() {
+    mysql.query('SELECT * FROM priority', function(err, rows, fields) {
+      if (err) throw err;
+      issuePriorities = rows;        
+      queryUsers();
+    });
+  }
+}
+
+function queryUsers() {
+  mysql.query('SELECT lower_user_name FROM cwd_user WHERE active = 1', function(err, rows, fields) {
+    if (err) throw err;
+    processUsers(rows);
+  });
+}
+
+function processUsers(users) {
+  users.forEach(function(usernameObject){
+    processUser(_.values(usernameObject)[0]);
+  });
+}
+
+function processUser(username) {
+  request.get({uri: 'http://jira.suitart.com/rest/api/2/user?username=' + username, 'auth': {'user': config.jira.user,'pass': config.jira.password,'sendImmediately': true}}, 
+	function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var user = JSON.parse(body);
+		var avatar = _.values(user.avatarUrls)[0].replace('s=16', '');
+		user.avatarUrls = {tiny: avatar+'s=16', small: avatar+'s=64', medium: avatar+'s=128'};
+        processIssues(user);
+      }
+      else {
+        console.log('could not fetch user' + username);
+        if (error) console.log(error);
+        else console.log(body);
+      }
+    });
+}
+
+function processIssues(user) {
+  var allIssues = [], issues = {hasIssues: false, overdue: [], today: [], tomorrow: [], nextdays: [], unscheduled: []};
+  user.summary = 'Issues: ';
+  
+  mysql.query('SELECT * FROM jiraissue WHERE ASSIGNEE = "'+user.name+'" AND issuestatus != 6', function(err, rows, fields) {
+    if (err) throw err;
+    allIssues = populateIssueDetails(rows);
+    filterIssues();
+  });
+
+  function filterIssues(){
+    
+    if(allIssues.length) {
+      user.summary = user.summary + 'Total:'+allIssues.length+', ';
+      
+      issues.hasIssues = true;
+      usersCount = usersCount + 1;
+      
+  	  issues.overdue = _.filter(allIssues, function(issue) {
+        // return true where date is older than the current day
+        return issue.DUEDATE != null && moment().startOf('day').diff(moment(new Date(issue.DUEDATE))) > 0;  
+  	  });
+      user.summary = user.summary + 'Overdue: '+issues.overdue.length+', ';
+      issues.overdue.forEach(function(issue){
+        // return true where date is older than the current day
+        issue.DUEDATE =  moment(new Date(issue.DUEDATE)).hours(18).from();
+      });
+    
+    
+      issues.today = _.filter(allIssues, function(issue) {
+        // return true where condition is true for any issue
+        return issue.DUEDATE != null && moment().startOf('day').diff(moment(new Date(issue.DUEDATE))) === 0;  
+  	  });
+      user.summary = user.summary + 'Today: '+issues.today.length+', ';
+    
+      issues.today.forEach(function(issue){
+        issue.DUEDATE =  moment(new Date(issue.DUEDATE)).hours(18).from();
+      });
+
+
+      issues.tomorrow = _.filter(allIssues, function(issue) {
+        // return true where condition is true for any issue
+        return issue.DUEDATE != null && moment().startOf('day').add('days',1).diff(moment(new Date(issue.DUEDATE))) === 0;  
+  	  });
+      user.summary = user.summary + 'Tomorrow: '+issues.tomorrow.length+", ";
+    
+      issues.tomorrow.forEach(function(issue){
+        issue.DUEDATE =  moment(new Date(issue.DUEDATE)).hours(18).from();
+      });
+
+
+      issues.nextdays = _.filter(allIssues, function(issue) {
+        // return true where condition is true for any issue
+        return issue.DUEDATE != null && moment().startOf('day').add('days',2).diff(moment(new Date(issue.DUEDATE))) <= 0;  
+  	  });
+      user.summary = user.summary + 'Upcoming: '+issues.nextdays.length+", ";
+      issues.nextdays.forEach(function(issue){
+        issue.DUEDATE =  moment(new Date(issue.DUEDATE)).hours(18).from();
+      });
+
+
+      issues.unscheduled = _.filter(allIssues, function(issue) {
+        // return true where condition is true for any issue
+        return issue.DUEDATE == null;  
+  	  });
+      user.summary = user.summary + 'Unscheduled: '+issues.unscheduled.length+". ---------- ";
+      
+      sendMail(user, issues);
+    }
+    else {
+      console.log("user: " + user.name + "has no issues");
+    }
+
+  };
+}
+
+function sendMail(user, issues) {
+  fs.readFile('./views/issues.jade', 'utf8', function (err, template) {
+      if (err) throw err;
+      var fn = jade.compile(template);
+      var html = fn({user: user, issues: issues});
+
+      // setup e-mail template with unicode symbols
+      var mailOptions = {
+        from: config.gmail.name+" <"+config.gmail.user+">", // sender address
+        to: user.emailAddress,
+        subject: "✔ Task Reminders",
+        //text: "Only HTML Version ✔", // plaintext body
+        html: html // html body
+      }
+
+      smtpTransport.sendMail(mailOptions, function(error, res){
+        if(error){
+          console.log(error);
+        }else{
+          console.log("Message sent: " + res.message);
+        }
+        
+        usersCount = usersCount - 1;
+        if(usersCount === 0) {
+          mysql.end();
+          smtpTransport.close();
+          process.exit(0);
+        }
+      });
+
+  });
+
+  
+}
+
+function populateIssueDetails(issues){
+  var output = [];
+  issues.forEach(function(issue){
+    issue.issuestatus = _.findWhere(issueStatus, {ID: issue.issuestatus.toString()});
+    issue.issuetype = _.findWhere(issueTypes, {ID: issue.issuetype.toString()});
+    issue.PRIORITY = _.findWhere(issuePriorities, {ID: issue.PRIORITY.toString()});
+
+    output.push(issue);
+  });
+  return output;
+}
+
+
+// Set Timeout if jira fails
+setTimeout(function(){
+  
+  var mailOptions = {
+    from: config.gmail.name+" <"+config.gmail.user+">", // sender address
+    to: 'admin@suitart.ch',
+    subject: "x Task Reminders failed",
+    text: "Failed to run jira-reminder",
+  }
+  
+  
+  smtpTransport.sendMail(mailOptions, function(error, res){
+    if(error){
+      console.log(error);
+    }else{
+      console.log("Message sent: " + res.message);
+    }
+    
+    mysql.end();
+    process.exit(0);
+    smtpTransport.close();
+  });
+  
+  
+}, 3600000)
+
+
+console.log('Running Jira-Reminder');
