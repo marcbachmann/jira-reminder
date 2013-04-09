@@ -160,11 +160,11 @@ function processIssues(user) {
         return issue.DUEDATE == null;  
   	  });
       user.summary = user.summary + 'Unscheduled: '+issues.unscheduled.length+". ---------- ";
-      
+      console.log("✔ " + user.name + " has issues");
       sendMail(user, issues);
     }
     else {
-      console.log("user: " + user.name + "has no issues");
+      console.log("x " + user.name + " has no issues");
     }
 
   };
@@ -189,11 +189,13 @@ function sendMail(user, issues) {
         if(error){
           console.log(error);
         }else{
-          console.log("Message sent: " + res.message);
+          console.log("sent: ✔ "+user.name+ " " + res.message);
         }
         
         usersCount = usersCount - 1;
         if(usersCount === 0) {
+          console.log('✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔');
+          console.log('finished successful');
           mysql.end();
           smtpTransport.close();
           process.exit(0);
@@ -245,4 +247,4 @@ setTimeout(function(){
 }, 3600000)
 
 
-console.log('Running Jira-Reminder');
+console.log(new Date() + ': run Jira Reminder');
