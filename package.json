@@ -1,15 +1,16 @@
 {
   "name": "jira-reminder",
   "version": "0.0.1",
-  "description": "Jira Issue Reminder Script",
+  "description": "Jira Issue Reminder Script which sends an Email to all users with their issues",
   "main": "app.js",
   "dependencies": {
     "express": "~3.1.1",
     "jade": "~0.28.2",
     "jira": "~0.4.0",
+    "moment": "~2.0.0",
     "mysql": "~2.0.0-alpha7",
+    "nodemailer": "~0.4.1",
     "request": "~2.16.6",
-    "step": "~0.0.5",
     "underscore": "~1.4.4"
   },
   "devDependencies": {},
@@ -22,10 +23,15 @@
   },
   "keywords": [
     "jira",
-    "nodejs"
+    "issue",
+    "tracking",
+    "reminder",
+    "nodejs",
+    "node.js",
+    "script"
   ],
-  "author": "mrbrookman",
-  "license": "BSD",
+  "author": "Marc Bachmann",
+  "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "14e66f04de50e6b1f8e00d559c4384fe2eccca81"
+  "gitHead": "ea3ed88e99c2318f2359d72c8e70a9e82ba810d2"
 }
