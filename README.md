@@ -18,3 +18,11 @@ There are 4 groups:
 Example: 
 
 ![ScreenShot](https://raw.github.com/mrbrookman/jira-reminder/master/preview.png)
+
+
+TODO:
+- Replace Project Key in email with Project name with link.
+- Add Reporter to issue tables.
+- Replace preview Image in Readme with new file.
+- Replace API user calls with mysql queries. Currently they are implemented because they include gravatar images.
+- Query template in a sync call instead with each sendmail function.
