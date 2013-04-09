@@ -4,7 +4,8 @@ var fs = require('fs');
 var request = require('request');
 var _ = require('underscore');
 var moment = require('moment');
-    moment.lang('de');
+// If you need other languages, uncomment the following line.
+//    moment.lang('de');
 
 var express = require('express');
 var app = express();
@@ -77,6 +78,8 @@ function processUsers(users) {
   });
 }
 
+// Load user entity from REST API that contains the avatars.
+// TODO: This can be replaced with an SQL query. 
 function processUser(username) {
   request.get({uri: 'http://jira.example.com/rest/api/2/user?username=' + username, 'auth': {'user': config.jira.user,'pass': config.jira.password,'sendImmediately': true}}, 
 	function (error, response, body) {
