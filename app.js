@@ -37,9 +37,9 @@ initialize();
 
 // Initialize all required ids, icons & images of issue types, status & priority
 function initialize() {
-  // http://jira.suitart.com/rest/api/2/issuetype
-  // http://jira.suitart.com/rest/api/2/status
-  // http://jira.suitart.com/rest/api/2/priority
+  // http://jira.example.com/rest/api/2/issuetype
+  // http://jira.example.com/rest/api/2/status
+  // http://jira.example.com/rest/api/2/priority
   
   mysql.query('SELECT * FROM issuetype', function(err, rows, fields) {
     if (err) throw err;
@@ -78,7 +78,7 @@ function processUsers(users) {
 }
 
 function processUser(username) {
-  request.get({uri: 'http://jira.suitart.com/rest/api/2/user?username=' + username, 'auth': {'user': config.jira.user,'pass': config.jira.password,'sendImmediately': true}}, 
+  request.get({uri: 'http://jira.example.com/rest/api/2/user?username=' + username, 'auth': {'user': config.jira.user,'pass': config.jira.password,'sendImmediately': true}}, 
 	function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var user = JSON.parse(body);
@@ -98,12 +98,17 @@ function processIssues(user) {
   var allIssues = [], issues = {hasIssues: false, overdue: [], today: [], tomorrow: [], nextdays: [], unscheduled: []};
   user.summary = 'Issues: ';
   
+  // Query all Issues of a user at once. issuestatus 6 equals closed - do not load these.
+  // As we use Jira as Project Management, all other Issues should be listed.
+  // When the mails are getting longer, we have to exclude issues without duedate
   mysql.query('SELECT * FROM jiraissue WHERE ASSIGNEE = "'+user.name+'" AND issuestatus != 6', function(err, rows, fields) {
     if (err) throw err;
     allIssues = populateIssueDetails(rows);
     filterIssues();
   });
 
+
+  // Filter all Issues with Backbone. Group them by due date.
   function filterIssues(){
     
     if(allIssues.length) {
@@ -115,7 +120,7 @@ function processIssues(user) {
   	  issues.overdue = _.filter(allIssues, function(issue) {
         // return true where date is older than the current day
         return issue.DUEDATE != null && moment().startOf('day').diff(moment(new Date(issue.DUEDATE))) > 0;  
-  	  });
+      });
       user.summary = user.summary + 'Overdue: '+issues.overdue.length+', ';
       issues.overdue.forEach(function(issue){
         // return true where date is older than the current day
@@ -126,7 +131,7 @@ function processIssues(user) {
       issues.today = _.filter(allIssues, function(issue) {
         // return true where condition is true for any issue
         return issue.DUEDATE != null && moment().startOf('day').diff(moment(new Date(issue.DUEDATE))) === 0;  
-  	  });
+      });
       user.summary = user.summary + 'Today: '+issues.today.length+', ';
     
       issues.today.forEach(function(issue){
@@ -137,7 +142,7 @@ function processIssues(user) {
       issues.tomorrow = _.filter(allIssues, function(issue) {
         // return true where condition is true for any issue
         return issue.DUEDATE != null && moment().startOf('day').add('days',1).diff(moment(new Date(issue.DUEDATE))) === 0;  
-  	  });
+      });
       user.summary = user.summary + 'Tomorrow: '+issues.tomorrow.length+", ";
     
       issues.tomorrow.forEach(function(issue){
@@ -148,7 +153,7 @@ function processIssues(user) {
       issues.nextdays = _.filter(allIssues, function(issue) {
         // return true where condition is true for any issue
         return issue.DUEDATE != null && moment().startOf('day').add('days',2).diff(moment(new Date(issue.DUEDATE))) <= 0;  
-  	  });
+      });
       user.summary = user.summary + 'Upcoming: '+issues.nextdays.length+", ";
       issues.nextdays.forEach(function(issue){
         issue.DUEDATE =  moment(new Date(issue.DUEDATE)).hours(18).from();
@@ -158,7 +163,7 @@ function processIssues(user) {
       issues.unscheduled = _.filter(allIssues, function(issue) {
         // return true where condition is true for any issue
         return issue.DUEDATE == null;  
-  	  });
+      });
       user.summary = user.summary + 'Unscheduled: '+issues.unscheduled.length+". ---------- ";
       console.log("✔ " + user.name + " has issues");
       sendMail(user, issues);
@@ -170,6 +175,8 @@ function processIssues(user) {
   };
 }
 
+// Send Mail with Jade Template as HTML Mail
+// TODO: oops. a template should be loaded only once, not for each user
 function sendMail(user, issues) {
   fs.readFile('./views/issues.jade', 'utf8', function (err, template) {
       if (err) throw err;
@@ -192,6 +199,7 @@ function sendMail(user, issues) {
           console.log("sent: ✔ "+user.name+ " " + res.message);
         }
         
+        // End process if all users and those issues are processed
         usersCount = usersCount - 1;
         if(usersCount === 0) {
           console.log('✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔✔');
@@ -207,6 +215,7 @@ function sendMail(user, issues) {
   
 }
 
+// Function to map Ids of issue status, type & priority to the icons
 function populateIssueDetails(issues){
   var output = [];
   issues.forEach(function(issue){
@@ -225,7 +234,7 @@ setTimeout(function(){
   
   var mailOptions = {
     from: config.gmail.name+" <"+config.gmail.user+">", // sender address
-    to: 'admin@suitart.ch',
+    to: config.gmail.user,
     subject: "x Task Reminders failed",
     text: "Failed to run jira-reminder",
   }
@@ -243,7 +252,7 @@ setTimeout(function(){
     smtpTransport.close();
   });
   
-  
+  // Timeout time is one hour
 }, 3600000)
 
 
