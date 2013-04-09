@@ -16,7 +16,7 @@ var JiraApi = require('jira').JiraApi;
 var mysqlDriver = require('mysql');
 var nodemailer = require("nodemailer");
 
-var jira = new JiraApi('http', config.jira.host, config.jira.port, config.jira.user, config.jira.password, '2', true);
+var jira = new JiraApi(config.jira.protocol, config.jira.host, config.jira.port, config.jira.user, config.jira.password, '2', true);
 var mysql = mysqlDriver.createConnection({host: config.mysql.host, user: config.mysql.user, password: config.mysql.password, database: config.mysql.database});
 var smtpTransport = nodemailer.createTransport("SMTP",{service: "Gmail", auth: {user: config.gmail.user,pass: config.gmail.password}});
 
