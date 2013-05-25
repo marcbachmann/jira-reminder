@@ -1,4 +1,4 @@
-var path = require('path');
+	var path = require('path');
 var fs = require('fs');
 
 var request = require('request');
@@ -31,7 +31,6 @@ app.configure(function(){
   });
 });
 
-
 var issueTypes, issueStatus, issuePriorities, usersCount = 0;
 
 initialize();
@@ -43,32 +42,40 @@ function initialize() {
   // http://jira.example.com/rest/api/2/priority
   
   mysql.query('SELECT * FROM issuetype', function(err, rows, fields) {
-    if (err) throw err;
-    issueTypes = rows;
-    getIssueTypes();
+    if (err) {throw err;}
+    else {
+      issueTypes = rows;
+      getIssueTypes();
+    }
   });
 
   function getIssueTypes() {
     mysql.query('SELECT * FROM issuestatus', function(err, rows, fields) {
-      if (err) throw err;
-      issueStatus = rows;
-      getIssuePriorities();
+      if (err) {throw err;}
+      else {
+        issueStatus = rows;
+        getIssuePriorities();
+      }
     });
   }
 
   function getIssuePriorities() {
     mysql.query('SELECT * FROM priority', function(err, rows, fields) {
-      if (err) throw err;
-      issuePriorities = rows;        
-      queryUsers();
+      if (err) {throw err;}
+      else {
+        issuePriorities = rows;        
+        queryUsers();
+      }
     });
   }
 }
 
 function queryUsers() {
   mysql.query('SELECT lower_user_name FROM cwd_user WHERE active = 1', function(err, rows, fields) {
-    if (err) throw err;
-    processUsers(rows);
+    if (err){ throw err;}
+    else {
+      processUsers(rows);
+    }
   });
 }
 
@@ -81,7 +88,7 @@ function processUsers(users) {
 // Load user entity from REST API that contains the avatars.
 // TODO: This can be replaced with an SQL query. 
 function processUser(username) {
-  request.get({uri: 'http://jira.example.com/rest/api/2/user?username=' + username, 'auth': {'user': config.jira.user,'pass': config.jira.password,'sendImmediately': true}}, 
+  request.get({uri: 'http://jira.suitart.com/rest/api/2/user?username=' + username, 'auth': {'user': config.jira.user,'pass': config.jira.password,'sendImmediately': true}}, 
 	function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var user = JSON.parse(body);
@@ -90,9 +97,10 @@ function processUser(username) {
         processIssues(user);
       }
       else {
-        console.log('could not fetch user' + username);
+        console.log('could not fetch user: ' + username);
         if (error) console.log(error);
-        else console.log(body);
+        if (response) console.log(response);
+        if (body) console.log(body);
       }
     });
 }
@@ -167,6 +175,7 @@ function processIssues(user) {
         // return true where condition is true for any issue
         return issue.DUEDATE == null;  
       });
+
       user.summary = user.summary + 'Unscheduled: '+issues.unscheduled.length+". ---------- ";
       console.log("✔ " + user.name + " has issues");
       sendMail(user, issues);
@@ -260,3 +269,11 @@ setTimeout(function(){
 
 
 console.log(new Date() + ': run Jira Reminder');
+
+
+
+
+process.on('uncaughtException', function(err) {
+    // handle the error safely
+    console.log(err);
+});
