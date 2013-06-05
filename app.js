@@ -1,4 +1,4 @@
-	var path = require('path');
+var path = require('path');
 var fs = require('fs');
 
 var request = require('request');
@@ -190,7 +190,7 @@ function processIssues(user) {
 // Send Mail with Jade Template as HTML Mail
 // TODO: oops. a template should be loaded only once, not for each user
 function sendMail(user, issues) {
-  fs.readFile('./views/issues.jade', 'utf8', function (err, template) {
+  fs.readFile(__dirname + '/views/issues.jade', 'utf8', function (err, template) {
       if (err) throw err;
       var fn = jade.compile(template);
       var html = fn({user: user, issues: issues});
