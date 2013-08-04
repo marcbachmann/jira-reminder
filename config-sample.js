@@ -15,7 +15,6 @@ exports.mysql = mysql.createConnection({
 
 // Nodemailer Gmail settings - working with Google Mail and Google Apps Mail
 exports.gmail = {
-  name     : 'Jira Reminder',
   user     : 'admin@example.com',
   password : 'yourpassword',
 };

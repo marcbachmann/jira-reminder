@@ -4,7 +4,9 @@ Jira Reminder
 Jira Issue Reminder Script in node.js.
 The script can be triggered by cron.
 
-Send an email to each user that has open issues.
+Really dirty module, but working flawlessly (in my environment :-) ).
+
+It sends an email to each user that has open issues.
 
 All issues that are not complete will be listed in an Email.
 They are grouped by due date.
